@@ -6,50 +6,125 @@ The goal of this project is to develop a 3-tier rule engine application with a s
 ---
 
 ## Table of Contents
-1. [Project Overview](#project-overview)
-2. [Technologies Used](#technologies-used)
-3. [Setup and Installation](#setup-and-installation)
-4. [Running the Application](#running-the-application)
-5. [API Endpoints](#api-endpoints)
-6. [Database Setup](#database-setup)
-7. [Testing](#testing)
-8. [Bonus Features](#bonus-features)
-9. [Security and Performance](#security-and-performance)
-10. [Contributing](#contributing)
+1. [Objective](#objective)
+2. [Data Structure](#data-structure)
+3. [Data Storage](#data-storage)
+4. [API Design](#api-design)
+5. [Test Cases](#test-cases)
+6. [Bonus Features](#bonus-features)
+7. [Non-Functional Requirements](#non-functional-requirements)
+8. [How to Run the Application](#how-to-run-the-application)
+9. [GitHub Usage](#github-usage)
+10. [Contribution](#contribution)
 11. [License](#license)
 
 ---
 
-## Project Overview
+## 1.Project Overview
 The rule engine allows users to define and modify rules dynamically using an AST structure. The application can:
 - Create and store conditional rules based on user attributes.
 - Combine rules into a single AST.
 - Evaluate these rules against user-provided data.
 - Store and retrieve rules from a MySQL database.
 ---
-Sample rules:
-- rule1 = "((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing')) AND (salary > 50000 OR experience > 5)"
-- rule2 = "((age > 30 AND department = 'Marketing')) AND (salary > 20000 OR experience > 5)"
-
-
 ## Technologies Used
 - **Backend Framework**: Flask (Python)
 - **Frontend**: HTML, CSS, JavaScript (if applicable)
-- **Database**: MySQL (using Docker for containerized setup)
+- **Database**: flask_sqlalchemy
 - **Other Libraries**:
   - SQLAlchemy (ORM)
   - Werkzeug (for API)
   - Jinja2 (for templating)
+## 2. Data Structure
+The application uses a `Node` structure to represent the AST:
+
+```python
+class Node:
+    def __init__(self, node_type, left=None, right=None, value=None):
+        self.type = node_type  # "operator" or "operand"
+        self.left = left       # Reference to left child Node
+        self.right = right     # Reference to right child Node
+        self.value = value     # Optional value for operand nodes
+```
+
+
+## 3. Data Storage
+The application employs SQLite as the database to store rules and application metadata. Below is the schema:
+```sql
+CREATE TABLE rules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rule_string TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+sample rules
+```sql
+INSERT INTO rules (rule_string) VALUES
+    ("((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing')) AND (salary > 50000 OR experience > 5)"),
+    ("((age > 30 AND department = 'Marketing')) AND (salary > 20000 OR experience > 5)");
+```
 
 ---
+## 4. API Design
 
-## Setup and Installation
+The following API functions are provided:
+
+### 1. Create Rule
+- **Function:** `create_rule(rule_string)`
+- **Description:** Takes a rule string and returns a Node object representing the Abstract Syntax Tree (AST).
+  
+### 2. Combine Rules
+- **Function:** `combine_rules(rules)`
+- **Description:** Combines a list of rule strings into a single AST, optimizing for efficiency.
+
+### 3. Evaluate Rule
+- **Function:** `evaluate_rule(json_data)`
+- **Description:** Evaluates the AST against provided attribute data, returning `True` or `False` based on the evaluation result.
+  
+## 5. Test Cases
+
+1. **Create Individual Rules:** 
+   - Create individual rules from the examples using `create_rule` and verify their AST representation.
+
+2. **Combine Rules:** 
+   - Combine the example rules using `combine_rules` and ensure the resulting AST reflects the combined logic.
+
+3. **Evaluate Rules:** 
+   - Implement sample JSON data and test `evaluate_rule` for different scenarios.
+
+4. **Explore Additional Rules:** 
+   - Explore combining additional rules and test the functionality.
+
+## 6. Bonus Features
+
+- **Error Handling:** 
+  - Implements error handling for invalid rule strings or data formats.
+
+- **Validations:** 
+  - Ensures attributes are validated against a defined catalog.
+
+- **Rule Modification:** 
+  - Allows modification of existing rules.
+
+- **User-Defined Functions:** 
+  - Support for advanced conditions (planned for future enhancements).
+## 7. Non-Functional Requirements
+
+- **Security:** 
+  - Implement security measures, including protection against SQL injection.
+
+- **Performance:** 
+  - Optimize rule evaluation with caching mechanisms.
+
+- **Scalability:** 
+  - Design the application to scale with increased loads.
+
+## 8. Setup and Installation
 
 ###  Clone the Repository
 ```bash
 git clone https://github.com/AkshayReddyy16/Rule-Engine-with-AST.git
 cd Rule-Engine-with-AST
-Marketing')) AND (salary > 20000 OR experience > 5)"
 ```
 ###  Create a Virtual Environment
 ```bash
@@ -61,104 +136,42 @@ venv\Scripts\activate      # For Windows
 ```bash
 pip install -r requirements.txt
 ```
-##  Database Setup Using Docker
-1. Pull and run MySQL using Docker:
+### 4. Run the Application:
 ```bash
-docker run --name mysql-container \
-  -e MYSQL_ROOT_PASSWORD=rootpassword \
-  -e MYSQL_DATABASE=mydatabase \
-  -e MYSQL_USER=myuser \
-  -e MYSQL_PASSWORD=mypassword \
-  -p 3306:3306 \
-  -d mysql:latest
+python app.py  # Replace with the main script of the application
 ```
-2. Connect to the MySQL container:
-   ```bash
-   winpty docker exec -it mysql-container mysql -u root -p
-  ```
-```
-3. Create the necessary tables by running the SQL script provided in db_setup.sql.
-##  Set up Environment Variables
-Create a .env file and set the following:
-```env
-DATABASE_URI=mysql+pymysql://myuser:mypassword@localhost/mydatabase
-FLASK_APP=app.py
-FLASK_ENV=development
-```
-### Running the Application
-To run the Flask application:
-```bash
-flask run
-```
+### 5. Access the API: Use tools like Postman or cURL to test the API endpoints
 The application should now be available at http://127.0.0.1:5000.
 
-# Rule Engine API Endpoints
+### Rule Engine API Endpoints
 
 Here are the primary API endpoints for the rule engine:
 
-## Create Rule
+### Create Rule
 
 - **Endpoint:** `/create_rule`
 - **Method:** POST
 - **Description:** Accepts a string representing a rule and returns an AST.
 
-## Combine Rules
+### Combine Rules
 
 - **Endpoint:** `/combine_rules`
 - **Method:** POST
 - **Description:** Combines a list of rules into a single AST.
+## 9. GitHub Usage
+This project is hosted on GitHub. You can find the codebase at [https://github.com/AkshayReddyy16/Rule-Engine-with-AST](https://github.com/AkshayReddyy16/Rule-Engine-with-AST). 
 
-## Evaluate Rule
+To contribute to the project, please fork the repository and submit a pull request with your changes. Ensure your code is well-documented and adheres to the project's coding standards.
 
-- **Endpoint:** `/evaluate_rule`
-- **Method:** POST
-- **Description:** Evaluates the rule against user data and returns a boolean.
-## Database Setup
+## 10. Contribution
+Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them with descriptive messages.
+4. Push your changes to your forked repository.
+5. Submit a pull request to the main repository for review.
 
-A MySQL database is used to store rules and metadata. 
-
-## Database Structure
-
-- Tables are structured to store the Abstract Syntax Tree (AST) and associated rules for dynamic evaluation.
-
-## Deployment
-
-- The database can be deployed using Docker as detailed in the Setup and Installation section.
-# Testing
-
-You can test the API endpoints by sending requests via tools like Postman or cURL. Sample test cases include:
-
-- Testing `create_rule` with different rule strings.
-- Testing `combine_rules` to check the efficiency of combining multiple rules.
-- Evaluating rules against various user data inputs to ensure correct behavior.
-## Bonus Features
-
-- **Error Handling:** The system validates rule strings and ensures they follow correct syntax.
-- **User-Defined Functions:** Extendable to allow user-defined functions for advanced rule conditions.
-- **Performance:** Optimized rule evaluation by minimizing redundant checks during AST traversal.
-## Security and Performance
-
-- **Security:** The application uses parameterized queries to prevent SQL injection and has input validation for rule creation.
-- **Performance:** Rule evaluation is designed to be efficient, minimizing redundant evaluations and combining rules using a most-frequent-operator heuristic.
-## Contributing
-
-- 1. Fork the repository.
-- 2. Create a new branch: 
-  ```bash
-  git checkout -b feature-branch
-```
-```
-3. Commit your changes:
-```bash
-git commit -m 'Add new feature'
-```
-4. Push to the branch:
-```bash
-git push origin feature-branch
-```
-5. Open a pull request.
-
-
+For larger changes, consider opening an issue first to discuss your ideas or improvements with the maintainers.
 
 
 
