@@ -26,11 +26,11 @@ The rule engine allows users to define and modify rules dynamically using an AST
 - Combine rules into a single AST.
 - Evaluate these rules against user-provided data.
 - Store and retrieve rules from a MySQL database.
-
+---
 Sample rules:
 rule1 = "((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing')) AND (salary > 50000 OR experience > 5)" 
 rule2 = "((age > 30 AND department = '
----
+
 
 ## Technologies Used
 - **Backend Framework**: Flask (Python)
@@ -45,13 +45,13 @@ rule2 = "((age > 30 AND department = '
 
 ## Setup and Installation
 
-### 1. Clone the Repository
+###  Clone the Repository
 ```bash
 git clone https://github.com/AkshayReddyy16/Rule-Engine-with-AST.git
 cd Rule-Engine-with-AST
 Marketing')) AND (salary > 20000 OR experience > 5)"
 ```
-### 2. Create a Virtual Environment
+###  Create a Virtual Environment
 ```bash
 python -m venv venv
 source venv/bin/activate  # For Linux/Mac
@@ -61,7 +61,7 @@ venv\Scripts\activate      # For Windows
 ```bash
 pip install -r requirements.txt
 ```
-### 4. Database Setup Using Docker
+##  Database Setup Using Docker
 1. Pull and run MySQL using Docker:
 ```bash
 docker run --name mysql-container \
@@ -78,7 +78,7 @@ docker run --name mysql-container \
   ```
 ```
 3. Create the necessary tables by running the SQL script provided in db_setup.sql.
-### 5. Set up Environment Variables
+##  Set up Environment Variables
 Create a .env file and set the following:
 ```env
 DATABASE_URI=mysql+pymysql://myuser:mypassword@localhost/mydatabase
@@ -113,7 +113,7 @@ Here are the primary API endpoints for the rule engine:
 - **Endpoint:** `/evaluate_rule`
 - **Method:** POST
 - **Description:** Evaluates the rule against user data and returns a boolean.
-# Database Setup
+## Database Setup
 
 A MySQL database is used to store rules and metadata. 
 
@@ -131,16 +131,16 @@ You can test the API endpoints by sending requests via tools like Postman or cUR
 - Testing `create_rule` with different rule strings.
 - Testing `combine_rules` to check the efficiency of combining multiple rules.
 - Evaluating rules against various user data inputs to ensure correct behavior.
-# Bonus Features
+## Bonus Features
 
 - **Error Handling:** The system validates rule strings and ensures they follow correct syntax.
 - **User-Defined Functions:** Extendable to allow user-defined functions for advanced rule conditions.
 - **Performance:** Optimized rule evaluation by minimizing redundant checks during AST traversal.
-# Security and Performance
+## Security and Performance
 
 - **Security:** The application uses parameterized queries to prevent SQL injection and has input validation for rule creation.
 - **Performance:** Rule evaluation is designed to be efficient, minimizing redundant evaluations and combining rules using a most-frequent-operator heuristic.
-# Contributing
+## Contributing
 
 - 1. Fork the repository.
 - 2. Create a new branch: 
