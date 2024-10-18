@@ -28,8 +28,8 @@ The rule engine allows users to define and modify rules dynamically using an AST
 - Store and retrieve rules from a MySQL database.
 ---
 Sample rules:
-rule1 = "((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing')) AND (salary > 50000 OR experience > 5)" 
-rule2 = "((age > 30 AND department = '
+- rule1 = "((age > 30 AND department = 'Sales') OR (age < 25 AND department = 'Marketing')) AND (salary > 50000 OR experience > 5)"
+- rule2 = "((age > 30 AND department = 'Marketing')) AND (salary > 20000 OR experience > 5)"
 
 
 ## Technologies Used
