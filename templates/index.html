@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Engine</title>
+    <link rel="stylesheet" href="static/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #007BFF;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #007BFF;
+            padding-bottom: 10px;
+        }
+        form {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #rulesList {
+            list-style-type: none;
+            padding: 0;
+        }
+        #rulesList li {
+            background-color: #e7f3fe;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #rulesList button {
+            background-color: #dc3545;
+        }
+        #rulesList button:hover {
+            background-color: #c82333;
+        }
+        #results {
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rule Engine</h1>
+    <h2>Add Rule</h2>
+    <form id="ruleForm">
+        <label for="description">Rule Description:</label>
+        <input type="text" id="description" required>
+        <label for="condition">Rule Condition:</label>
+        <input type="text" id="condition" required>
+        <button type="submit">Add Rule</button>
+    </form>
+
+    <h2>Existing Rules</h2>
+    <ul id="rulesList"></ul>
+
+    <h2>Evaluate User Eligibility</h2>
+    <form id="evalForm">
+        <label for="age">Age:</label>
+        <input type="number" id="age" required>
+        <label for="department">Department:</label>
+        <input type="text" id="department" required>
+        <label for="income">Income:</label>
+        <input type="number" id="income" required>
+        <button type="submit">Evaluate</button>
+    </form>
+
+    <h2>Results:</h2>
+    <pre id="results"></pre>
+
+    <script>
+        document.getElementById('ruleForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const description = document.getElementById('description').value;
+            const condition = document.getElementById('condition').value;
+
+            const response = await fetch('/add_rule', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description, condition })
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+            fetchRules();  // Refresh the rules list after adding a rule
+        });
+
+        async function fetchRules() {
+            const response = await fetch('/rules');
+            const data = await response.json();
+            
+            const rulesList = document.getElementById('rulesList');
+            rulesList.innerHTML = '';
+
+            data.rules.forEach(rule => {
+                const li = document.createElement('li');
+                li.textContent = `${rule.description} (ID: ${rule.id})`;
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => deleteRule(rule.id);
+                
+                li.appendChild(deleteButton);
+                rulesList.appendChild(li);
+            });
+        }
+
+        async function deleteRule(ruleId) {
+            const response = await fetch(`/delete_rule/${ruleId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+            alert(result.message || result.error);
+            fetchRules();  // Refresh the rules list after deleting a rule
+        }
+
+        document.getElementById('evalForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const userData = {
+                age: parseInt(document.getElementById('age').value),
+                department: document.getElementById('department').value,
+                income: parseInt(document.getElementById('income').value)
+            };
+
+            const response = await fetch('/evaluate_rule', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: userData })
+            });
+            const results = await response.json();
+            document.getElementById('results').textContent = JSON.stringify(results, null, 2);
+        });
+
+        // Call fetchRules on page load to populate the rules list
+        fetchRules();
+    </script>
+</body>
+</html>

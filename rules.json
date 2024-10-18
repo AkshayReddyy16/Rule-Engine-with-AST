@@ -1,0 +1,12 @@
+{
+    "rules": [
+        {
+            "rule_id": 1,
+            "condition": "age > 18 AND income > 50000"
+        },
+        {
+            "rule_id": 2,
+            "condition": "age < 60 OR income < 30000"
+        }
+    ]
+}
