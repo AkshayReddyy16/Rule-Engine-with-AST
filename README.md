@@ -1,4 +1,4 @@
-# Rule Engine with AST - Internship Program Submission
+# Rule Engine with AST 
 
 ## Objective
 The goal of this project is to develop a 3-tier rule engine application with a simple UI, API, and backend. The application determines user eligibility based on attributes such as age, department, income, spend, etc. The rules governing eligibility are represented using an Abstract Syntax Tree (AST), which allows dynamic creation, combination, and modification of these rules.
@@ -121,12 +121,12 @@ The following API functions are provided:
 
 ## 8. Setup and Installation
 
-###  Clone the Repository
+###  1. Clone the Repository
 ```bash
 git clone https://github.com/AkshayReddyy16/Rule-Engine-with-AST.git
 cd Rule-Engine-with-AST
 ```
-###  Create a Virtual Environment
+###  2. Create a Virtual Environment
 ```bash
 python -m venv venv
 source venv/bin/activate  # For Linux/Mac
@@ -140,7 +140,7 @@ pip install -r requirements.txt
 ```bash
 python app.py  # Replace with the main script of the application
 ```
-### 5. Access the API: Use tools like Postman or cURL to test the API endpoints
+- 5. Access the API: Use tools like Postman or cURL to test the API endpoints
 The application should now be available at http://127.0.0.1:5000.
 
 ### Rule Engine API Endpoints
